@@ -1,0 +1,6 @@
+rootProject.name = 'TallerDos'
+
+include 'user-service'
+include 'movie-service'
+include 'config-service'
+include 'eureka-service'
