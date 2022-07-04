@@ -1,12 +1,12 @@
-package co.com.poli.movieservice.controller;
+package co.com.poli.showtimeservice.controller;
 
-import co.com.poli.movieservice.helpers.ErrorMessage;
-import co.com.poli.movieservice.helpers.Response;
-import co.com.poli.movieservice.helpers.ResponseBuild;
-import co.com.poli.movieservice.mappers.MovieMapper;
-import co.com.poli.movieservice.model.dto.MovieDto;
-import co.com.poli.movieservice.model.entity.Movie;
-import co.com.poli.movieservice.service.MovieService;
+import co.com.poli.showtimeservice.helpers.ErrorMessage;
+import co.com.poli.showtimeservice.helpers.Response;
+import co.com.poli.showtimeservice.helpers.ResponseBuild;
+import co.com.poli.showtimeservice.mappers.ShowtimeMapper;
+import co.com.poli.showtimeservice.model.dto.ShowtimeDto;
+import co.com.poli.showtimeservice.model.entity.Showtime;
+import co.com.poli.showtimeservice.service.ShowtimeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,44 +18,45 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class MovieController {
+public class ShowtimeController {
 
-    private final MovieService movieService;
+    private final ShowtimeService showtimeService;
     private final ResponseBuild responseBuild;
-    private final MovieMapper movieMapper = Mappers.getMapper(MovieMapper.class);
+    private final ShowtimeMapper showtimeMapper = Mappers.getMapper(ShowtimeMapper.class);
 
     @PostMapping
-    public Response save(@Valid @RequestBody MovieDto movieDto, BindingResult result){
+    public Response save(@Valid @RequestBody ShowtimeDto showtimeDto, BindingResult result){
         if (result.hasErrors()){
             return responseBuild.failed(formatMessage(result));
         }
-        return responseBuild.created(movieService.save(movieMapper.to(movieDto)));
+        Showtime st = showtimeService.save(showtimeMapper.to(showtimeDto));
+        if(st==null){
+            return responseBuild.failed("Movies no encontradas");
+        }
+        return responseBuild.created(showtimeService.findById(st.getId()));
     }
 
     @GetMapping
     public Response findAll(){
-        List<Movie> movies = movieService.findAll();
-        return responseBuild.success(movies);
+        List<Showtime> showtimes = showtimeService.findAll();
+        if (showtimes==null){
+            return responseBuild.notFound();
+        }
+        return responseBuild.success(showtimes);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public Response findById(@PathVariable("id") Long id){
-        if (movieService.findById(id).isPresent()){
-            return responseBuild.success(movieService.findById(id));
+        Optional<Showtime> showtime = showtimeService.findById(id);
+        if (!showtime.isPresent()){
+            return responseBuild.notFound();
         }
-        return responseBuild.notFound();
-    }
-
-    @DeleteMapping("/{id}")
-    public Response deleteById(@PathVariable("id") Long id){
-        if (movieService.delete(id)){
-            return responseBuild.success();
-        }
-        return responseBuild.notFound();
+        return responseBuild.success(showtime);
     }
 
     private String formatMessage(BindingResult result) {
