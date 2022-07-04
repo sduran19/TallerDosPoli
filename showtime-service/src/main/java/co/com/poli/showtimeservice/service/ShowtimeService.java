@@ -9,4 +9,5 @@ public interface ShowtimeService {
     Showtime save(Showtime showtime);
     List<Showtime> findAll();
     Optional<Showtime> findById(Long id);
+    Showtime update(Showtime showtime,Long id);
 }

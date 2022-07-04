@@ -1,12 +1,12 @@
-package co.com.poli.showtimeservice.controller;
+package co.com.poli.bookingservice.controller;
 
-import co.com.poli.showtimeservice.helpers.ErrorMessage;
-import co.com.poli.showtimeservice.helpers.Response;
-import co.com.poli.showtimeservice.helpers.ResponseBuild;
-import co.com.poli.showtimeservice.mappers.ShowtimeMapper;
-import co.com.poli.showtimeservice.model.dto.ShowtimeDto;
-import co.com.poli.showtimeservice.model.entity.Showtime;
-import co.com.poli.showtimeservice.service.ShowtimeService;
+import co.com.poli.bookingservice.helpers.ErrorMessage;
+import co.com.poli.bookingservice.helpers.Response;
+import co.com.poli.bookingservice.helpers.ResponseBuild;
+import co.com.poli.bookingservice.mappers.BookingMapper;
+import co.com.poli.bookingservice.model.dto.BookingDto;
+import co.com.poli.bookingservice.model.entity.Booking;
+import co.com.poli.bookingservice.service.BookingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,26 +23,27 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class ShowtimeController {
+public class BookingController {
 
-    private final ShowtimeService showtimeService;
+    private final BookingService bookingService;
     private final ResponseBuild responseBuild;
-    private final ShowtimeMapper showtimeMapper = Mappers.getMapper(ShowtimeMapper.class);
+    private final BookingMapper bookingMapper = Mappers.getMapper(BookingMapper.class);
 
     @PostMapping
-    public Response save(@Valid @RequestBody ShowtimeDto showtimeDto, BindingResult result){
+    public Response save(@Valid @RequestBody BookingDto bookingDto, BindingResult result){
         if (result.hasErrors()){
             return responseBuild.failed(formatMessage(result));
         }
-        Showtime st = showtimeService.save(showtimeMapper.to(showtimeDto));
+        Booking st = bookingService.save(bookingMapper.to(bookingDto));
         if(st==null){
-            return responseBuild.failed("Movies no encontradas");
+            return responseBuild.failed("Registros no encontardos");
         }
-        return responseBuild.created(showtimeService.findById(st.getId()));
+        return responseBuild.created(bookingService.findById(st.getId()));
     }
+
     @GetMapping
     public Response findAll(){
-        List<Showtime> showtimes = showtimeService.findAll();
+        List<Booking> showtimes = bookingService.findAll();
         if (showtimes==null){
             return responseBuild.notFound();
         }
@@ -51,23 +52,25 @@ public class ShowtimeController {
 
     @GetMapping("{id}")
     public Response findById(@PathVariable("id") Long id){
-        Optional<Showtime> showtime = showtimeService.findById(id);
-        if (!showtime.isPresent()){
+        Optional<Booking> booking = bookingService.findById(id);
+        if (!booking.isPresent()){
             return responseBuild.notFound();
         }
-        return responseBuild.success(showtime);
+        return responseBuild.success(booking);
     }
 
-    @PutMapping("{id}")
-    public Response update(@Valid @RequestBody ShowtimeDto showtimeDto, BindingResult result, @PathVariable("id") Long id){
-        if (result.hasErrors()){
-            return responseBuild.failed(formatMessage(result));
+    @GetMapping("/user/{id}")
+    public Response findByUserId(@PathVariable("id") Long id){
+        List<Booking> bookings = bookingService.findByUserId(id);
+        if (bookings==null){
+            return responseBuild.notFound();
         }
-        Showtime st = showtimeService.update(showtimeMapper.to(showtimeDto), id);
-        if(st==null){
-            return responseBuild.failed("Registro no encontrado");
-        }
-        return responseBuild.success(showtimeService.findById(st.getId()));
+        return responseBuild.success(bookings);
+    }
+
+    @DeleteMapping("{id}")
+    public Response delete(@PathVariable("id") Long id){
+        return responseBuild.notFound();
     }
 
     private String formatMessage(BindingResult result) {

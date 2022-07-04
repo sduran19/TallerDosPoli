@@ -51,6 +51,14 @@ public class UserController {
         return responseBuild.success("No encontrado");
     }
 
+    @GetMapping("{id}")
+    public Response findUserById(@PathVariable("id") Long id){
+        if (userService.findById(id).isPresent()){
+            return responseBuild.success(userService.findById(id));
+        }
+        return responseBuild.notFound();
+    }
+
     private String formatMessage(BindingResult result) {
         List<Map<String, String>> errors = result.getFieldErrors().stream()
                 .map(error -> {

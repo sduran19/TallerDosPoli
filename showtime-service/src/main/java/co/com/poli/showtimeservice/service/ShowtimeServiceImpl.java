@@ -19,7 +19,6 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     private final ShowtimeRepository showtimeRepository;
     private final MovieClient movieClient;
 
-
     @Override
     public Showtime save(Showtime showtime) {
         if (moviesExist(showtime)) {
@@ -65,5 +64,18 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .collect(Collectors.toList());
         rs.get().setMovies(movies);
         return rs;
+    }
+
+    @Override
+    public Showtime update(Showtime showtime, Long id) {
+        Optional<Showtime> rs = showtimeRepository.findById(id);
+        if(rs.isPresent()){
+            rs.get().setDate(showtime.getDate());
+            rs.get().setMoviesId(showtime.getMoviesId());
+            showtimeRepository.save(rs.get());
+            rs.get().setMovies(listMovies(id));
+            return rs.get();
+        }
+        return null;
     }
 }
