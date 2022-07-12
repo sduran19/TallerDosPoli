@@ -1,5 +1,6 @@
 ext {
     set('springCloudVersion', "2021.0.2")
+    set('springAdminVersion', "2.6.2")
 }
 
 dependencies {
@@ -14,6 +15,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.5.RELEASE'
+    implementation 'de.codecentric:spring-boot-admin-starter-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 
     implementation 'org.modelmapper:modelmapper:3.1.0'
@@ -22,5 +25,6 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "de.codecentric:spring-boot-admin-dependencies:${springAdminVersion}"
     }
 }
