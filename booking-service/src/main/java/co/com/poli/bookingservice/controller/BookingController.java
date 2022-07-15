@@ -70,6 +70,9 @@ public class BookingController {
 
     @DeleteMapping("{id}")
     public Response delete(@PathVariable("id") Long id){
+        if(bookingService.delete(id)){
+            return responseBuild.success();
+        }
         return responseBuild.notFound();
     }
 

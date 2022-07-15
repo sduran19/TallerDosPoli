@@ -59,7 +59,11 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public Boolean delete(Long id) {
-        return null;
+        if (bookingRepository.existsById(id)){
+            bookingRepository.deleteById(id);
+            return true;
+        }
+        return bookingRepository.existsById(id);
     }
 
     private Boolean userExist(Booking booking) {
