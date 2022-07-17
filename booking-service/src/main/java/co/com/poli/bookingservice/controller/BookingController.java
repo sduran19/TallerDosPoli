@@ -62,7 +62,7 @@ public class BookingController {
     @GetMapping("/user/{id}")
     public Response findByUserId(@PathVariable("id") Long id){
         List<Booking> bookings = bookingService.findByUserId(id);
-        if (bookings==null){
+        if (bookings.isEmpty()){
             return responseBuild.notFound();
         }
         return responseBuild.success(bookings);

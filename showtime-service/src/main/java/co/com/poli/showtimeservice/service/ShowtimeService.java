@@ -10,4 +10,5 @@ public interface ShowtimeService {
     List<Showtime> findAll();
     Optional<Showtime> findById(Long id);
     Showtime update(Showtime showtime,Long id);
+    Boolean findMovie(Long idMovie);
 }

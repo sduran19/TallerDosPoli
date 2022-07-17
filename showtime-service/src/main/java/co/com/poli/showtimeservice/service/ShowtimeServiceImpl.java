@@ -78,4 +78,14 @@ public class ShowtimeServiceImpl implements ShowtimeService {
         }
         return null;
     }
+
+    @Override
+    public Boolean findMovie(Long idMovie) {
+        List<Showtime> showtimes = showtimeRepository.findAll();
+        long idMovies = showtimes.stream()
+                .map(Showtime::getMoviesId)
+                .filter(moviesId -> moviesId.contains(idMovie)).count();
+        System.out.println("NUMERO PELICULAS ENCONTRADAS: " + idMovies);
+        return idMovies >= 1;
+    }
 }

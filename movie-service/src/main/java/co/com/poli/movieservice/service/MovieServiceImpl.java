@@ -1,5 +1,6 @@
 package co.com.poli.movieservice.service;
 
+import co.com.poli.movieservice.clientFeing.ShowtimeClient;
 import co.com.poli.movieservice.model.entity.Movie;
 import co.com.poli.movieservice.persistence.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final ShowtimeClient showtimeClient;
 
     @Override
     public Movie save(Movie movie) {
@@ -20,12 +22,14 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Boolean delete(Long id) {
-        if (movieRepository.existsById(id)) {
+    public String delete(Long id) {
+        if (movieRepository.existsById(id) && !moviePresent(id)) {
             movieRepository.deleteById(id);
-            return true;
+            return "PELICULA ELIMINADA";
+        } else if (movieRepository.existsById(id)) {
+            return "PELICULA EN USO";
         }
-        return movieRepository.existsById(id);
+        return "PELICULA NO ENCONTRADA";
     }
 
     @Override
@@ -36,5 +40,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Optional<Movie> findById(Long id) {
         return movieRepository.findById(id);
+    }
+
+    private Boolean moviePresent(Long idMovie) {
+        Integer states = showtimeClient.findMoviePresentById(idMovie).getCode();
+        System.out.println("SE ENCONTRO MOVIE EN SHOWTIME: " + states);
+        return states != 404;
     }
 }

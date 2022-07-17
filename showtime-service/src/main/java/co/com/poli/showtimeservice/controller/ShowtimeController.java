@@ -70,6 +70,14 @@ public class ShowtimeController {
         return responseBuild.success(showtimeService.findById(st.getId()));
     }
 
+    @GetMapping("/movie/{id}")
+    public Response findMoviePresentById(@PathVariable("id") Long id){
+        if (showtimeService.findMovie(id)){
+            return responseBuild.success();
+        }
+        return responseBuild.notFound();
+    }
+
     private String formatMessage(BindingResult result) {
         List<Map<String, String>> errors = result.getFieldErrors().stream()
                 .map(error -> {

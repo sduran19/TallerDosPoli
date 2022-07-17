@@ -52,8 +52,11 @@ public class MovieController {
 
     @DeleteMapping("/{id}")
     public Response deleteById(@PathVariable("id") Long id){
-        if (movieService.delete(id)){
-            return responseBuild.success();
+        String state = movieService.delete(id);
+        if (state.equals("PELICULA ELIMINADA")){
+            return responseBuild.success(state);
+        } else if (state.equals("PELICULA EN USO")) {
+            return responseBuild.failed(state);
         }
         return responseBuild.notFound();
     }

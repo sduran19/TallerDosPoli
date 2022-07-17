@@ -44,11 +44,13 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public Response deleteById(@PathVariable("id") Long id){
-        if (userService.findById(id).isPresent()){
-            userService.delete(id);
-            return responseBuild.success();
+        String state = userService.delete(id);
+        if (state.equals("USUARIO ELIMINADO")){
+            return responseBuild.success(state);
+        } else if (state.equals("USUARIO EN USO")) {
+            return responseBuild.failed(state);
         }
-        return responseBuild.success("No encontrado");
+        return responseBuild.notFound();
     }
 
     @GetMapping("{id}")

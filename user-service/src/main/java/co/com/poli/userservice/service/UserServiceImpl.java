@@ -1,5 +1,7 @@
 package co.com.poli.userservice.service;
 
+import co.com.poli.userservice.clientFeing.BookingClient;
+import co.com.poli.userservice.model.Booking;
 import co.com.poli.userservice.model.entity.User;
 import co.com.poli.userservice.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final BookingClient bookingClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -28,8 +31,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    public String delete(Long id) {
+        if (userRepository.existsById(id) && !bookingExist(id)){
+            userRepository.deleteById(id);
+            return "USUARIO ELIMINADO";
+        } else if (userRepository.existsById(id)) {
+            return "USUARIO EN USO";
+        }
+        return "USUARIO NO ENCONTRADO";
     }
 
     @Override
@@ -42,5 +51,10 @@ public class UserServiceImpl implements UserService{
     @Transactional(readOnly = true)
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    private Boolean bookingExist(Long id) {
+        Integer states = bookingClient.findBookingByUserId(id).getCode();
+        return states != 404;
     }
 }
