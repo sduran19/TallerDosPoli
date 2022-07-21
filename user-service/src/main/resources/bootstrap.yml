@@ -3,7 +3,8 @@ spring:
     name: user-service
   cloud:
     config:
-      uri: http://localhost:9000
+      uri: http://config-service-svc:9000
       username: admin
       password: admin
       enabled: true
+      profile: prod

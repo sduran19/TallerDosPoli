@@ -44,8 +44,17 @@ subprojects {
 	bootJar {
 		enabled = true
 	}
+
+	bootBuildImage{
+		imageName= project.name
+	}
 }
 
 bootJar {
 	enabled = false
 }
+
+bootBuildImage{
+	enabled = false
+}
+
