@@ -1,7 +1,6 @@
 package co.com.poli.movieservice.model.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -11,6 +10,9 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "movies")
 public class Movie {
